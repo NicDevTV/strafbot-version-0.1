@@ -49,6 +49,6 @@ module.exports = {
             '#5865F2'
         );
 
-        await interaction.reply({ embeds: [embed], ephemeral: true });
+        await interaction.reply({ embeds: [embed], flags: 64 });
     }
 };

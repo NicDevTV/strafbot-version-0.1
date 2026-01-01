@@ -26,7 +26,7 @@ module.exports = {
                         .setRequired(true))),
 
     async execute(interaction) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: 64 });
 
         const subcommand = interaction.options.getSubcommand();
         const targetUser = interaction.options.getUser('user');

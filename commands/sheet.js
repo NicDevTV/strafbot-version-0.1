@@ -216,20 +216,20 @@ module.exports = {
                     
                     await interaction.followUp({ 
                         content: '💾 **Daten gespeichert!** Log wurde in `sheet_logs.json` hinzugefügt.',
-                        ephemeral: true 
+                        flags: 64 
                     });
                 } catch (saveError) {
                     console.error('❌ Fehler beim Speichern:', saveError);
                     await interaction.followUp({ 
                         content: '❌ Fehler beim Speichern der Logs.',
-                        ephemeral: true 
+                        flags: 64 
                     });
                 }
             } else if (speichern && !isAdmin && !isAuthorizedUser) {
                 // Warnung wenn Speichern gewünscht aber keine Berechtigung
                 await interaction.followUp({
                     content: '⚠️ **Keine Berechtigung zum Speichern!** Diese Funktion ist nur für Admins verfügbar.',
-                    ephemeral: true
+                    flags: 64
                 });
             }
             
@@ -260,9 +260,9 @@ module.exports = {
                 .setTimestamp();
             
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ embeds: [errorEmbed], ephemeral: true });
+                await interaction.followUp({ embeds: [errorEmbed], flags: 64 });
             } else {
-                await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+                await interaction.reply({ embeds: [errorEmbed], flags: 64 });
             }
         }
     },
@@ -272,26 +272,26 @@ module.exports = {
         const [action, userId] = interaction.customId.split('_').slice(1);
         
         if (interaction.user.id !== userId) {
-            return interaction.reply({ content: '❌ Das sind nicht deine Buttons!', ephemeral: true });
+            return interaction.reply({ content: '❌ Das sind nicht deine Buttons!', flags: 64 });
         }
         
         switch (action) {
             case 'copy':
                 await interaction.reply({ 
                     content: '📋 **Kopier-Tipp:** Markiere den Text im Codeblock und kopiere ihn mit Strg+C!', 
-                    ephemeral: true 
+                    flags: 64 
                 });
                 break;
             case 'reverse':
                 await interaction.reply({ 
                     content: '🔄 **Rückgängig:** Verwende einfach den ursprünglichen Text erneut mit `/sheet`!', 
-                    ephemeral: true 
+                    flags: 64 
                 });
                 break;
             case 'export':
                 await interaction.reply({ 
                     content: '💾 **Export-Feature:** Kommt bald! Verwende erstmal Copy & Paste.', 
-                    ephemeral: true 
+                    flags: 64 
                 });
                 break;
         }

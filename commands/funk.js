@@ -12,7 +12,7 @@ module.exports = {
         // Sende den Code als private Nachricht (ephemeral)
         await interaction.reply({
             content: `🎯 Dein generierter Funk-Code: **${funkCode}**`,
-            ephemeral: true
+            flags: 64
         });
     },
 };

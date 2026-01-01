@@ -7,7 +7,7 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
   async execute(interaction) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: 64 });
 
     const RULES_CHANNEL_ID = '1410596490878910494';
     const rulesChannel = interaction.guild.channels.cache.get(RULES_CHANNEL_ID);

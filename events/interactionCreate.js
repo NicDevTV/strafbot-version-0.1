@@ -42,13 +42,12 @@ module.exports = {
           await command.execute(interaction);
         } catch (error) {
           console.error(`❌ Command Fehler:`, error);
-          
-          const errorReply = { 
-            content: '❌ Fehler beim Ausführen!', 
-            flags: 64 
-          };
-          
-          if (interaction.replied || interaction.deferred) {
+
+          const errorReply = { content: '❌ Fehler beim Ausführen!', flags: 64 };
+
+          if (interaction.deferred && !interaction.replied) {
+            await interaction.editReply({ content: errorReply.content }).catch(() => {});
+          } else if (interaction.replied) {
             await interaction.followUp(errorReply).catch(() => {});
           } else {
             await interaction.reply(errorReply).catch(() => {});

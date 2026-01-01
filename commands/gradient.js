@@ -197,7 +197,7 @@ module.exports = {
 
     async execute(interaction) {
         try {
-            await interaction.deferReply();
+            await interaction.deferReply({ flags: 64 });
 
             const text = interaction.options.getString('text');
             const rainbow = interaction.options.getBoolean('rainbow') || false;
@@ -237,8 +237,8 @@ module.exports = {
                 if (!startRgb || !endRgb) {
                     return await interaction.editReply({
                         content: `❌ **Fehler:** Ungültige Hex-Farben!\n` +
-                                 `Verwende Format: \`#FF0000\` oder einen Farbnamen wie \`rot\`\n\n` +
-                                 `**Verfügbare Farbnamen:**\n${Object.keys(presetColors).join(', ')}`,
+                                         `Verwende Format: \`#FF0000\` oder einen Farbnamen wie \`rot\`\n\n` +
+                                         `**Verfügbare Farbnamen:**\n${Object.keys(presetColors).join(', ')}`,
                     });
                 }
             } else {
@@ -342,14 +342,14 @@ module.exports = {
         } catch (error) {
             console.error('❌ Fehler im Gradient Command:', error);
             
-            const errorMsg = {
-                content: '❌ Ein Fehler ist beim Erstellen des Farbverlaufs aufgetreten. Bitte versuche es erneut!',
-            };
+            const errorMsg = { content: '❌ Ein Fehler ist beim Erstellen des Farbverlaufs aufgetreten. Bitte versuche es erneut!', flags: 64 };
 
-            if (interaction.deferred) {
-                await interaction.editReply(errorMsg);
+            if (interaction.deferred && !interaction.replied) {
+                await interaction.editReply({ content: errorMsg.content }).catch(() => {});
+            } else if (interaction.replied) {
+                await interaction.followUp(errorMsg).catch(() => {});
             } else {
-                await interaction.reply(errorMsg);
+                await interaction.reply(errorMsg).catch(() => {});
             }
         }
     },

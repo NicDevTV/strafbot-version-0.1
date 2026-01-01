@@ -220,16 +220,16 @@ module.exports = {
         if (interaction.member.roles.cache.has(NON_PD_ROLE_ID)) {
             return await interaction.reply({
                 content: '❌ Du darfst diesen Command nicht nutzen. Du hast die NonPD Rolle.',
-                ephemeral: true
+                flags: 64
             });
         }
 
         // CHANNEL CHECK
-        const PD_CHANNEL_ID = '1426983286907080888';
+        const PD_CHANNEL_ID = '1375939384372891698';
         if (interaction.channel.id !== PD_CHANNEL_ID) {
             return await interaction.reply({
-                content: '❌ Dieser Command darf nur im <#1426983286907080888> Channel verwendet werden!',
-                ephemeral: true
+                content: '❌ Dieser Command darf nur im <#1375939384372891698> Channel verwendet werden!',
+                flags: 64
             });
         }
 
@@ -256,11 +256,18 @@ module.exports = {
         } catch (error) {
             return interaction.reply({
                 content: '⚠️ Fehler beim Laden des Strafkatalogs!',
-                ephemeral: true
+                flags: 64
             });
         }
 
         sessions.get(sessionId).allCrimes = strafkatalog;
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferReply({ flags: 64 });
+            } catch (err) {
+                // ignore defer errors
+            }
+        }
         await this.showPage(interaction, sessionId, 0, true);
     },
 
@@ -308,10 +315,17 @@ module.exports = {
                 );
 
             if (isInitial) {
-                await interaction.reply({
-                    embeds: [selectionEmbed],
-                    components: [modeRow]
-                });
+                if (interaction.deferred || interaction.replied) {
+                    await interaction.editReply({
+                        embeds: [selectionEmbed],
+                        components: [modeRow]
+                    });
+                } else {
+                    await interaction.reply({
+                        embeds: [selectionEmbed],
+                        components: [modeRow]
+                    });
+                }
             } else {
                 await interaction.update({
                     embeds: [selectionEmbed],
@@ -491,10 +505,17 @@ module.exports = {
         session.currentPage = currentPage;
 
         if (isInitial) {
-            await interaction.reply({
-                embeds: [embed],
-                components: components
-            });
+            if (interaction.deferred || interaction.replied) {
+                await interaction.editReply({
+                    embeds: [embed],
+                    components: components
+                });
+            } else {
+                await interaction.reply({
+                    embeds: [embed],
+                    components: components
+                });
+            }
         } else {
             await interaction.update({
                 embeds: [embed],
@@ -518,7 +539,7 @@ module.exports = {
         if (!session) {
             return interaction.reply({
                 content: '❌ Session nicht gefunden!',
-                ephemeral: true
+                flags: 64
             });
         }
 
@@ -547,7 +568,7 @@ module.exports = {
         if (!session) {
             return interaction.reply({
                 content: '❌ Session nicht gefunden!',
-                ephemeral: true
+                flags: 64
             });
         }
 
@@ -569,7 +590,7 @@ module.exports = {
                     if (session.actionType === 'wanted') {
                         return await interaction.reply({
                             content: '❌ Gestellt-Status ist nur bei Strafen verfügbar, nicht bei Fahndungen!',
-                            ephemeral: true
+                            flags: 64
                         });
                     }
                     await this.showGestelltMenu(interaction, sessionId);
@@ -614,7 +635,7 @@ module.exports = {
                     console.warn(`Unbekannte Button-Aktion: ${action}`);
                     await interaction.reply({
                         content: '❌ Unbekannte Aktion!',
-                        ephemeral: true
+                        flags: 64
                     });
                     break;
             }
@@ -624,7 +645,7 @@ module.exports = {
             if (!interaction.replied && !interaction.deferred) {
                 await interaction.reply({
                     content: '❌ Ein Fehler ist aufgetreten!',
-                    ephemeral: true
+                    flags: 64
                 }).catch(console.error);
             }
         }
@@ -636,7 +657,7 @@ module.exports = {
         if (!interaction.member.roles.cache.has(AKTEN_CLOSE_ROLE_ID)) {
             return await interaction.reply({
                 content: '❌ Du hast keine Berechtigung, Akten zu schließen!',
-                ephemeral: true
+                flags: 64
             });
         }
 
@@ -644,7 +665,7 @@ module.exports = {
         if (!aktenInfo) {
             return await interaction.reply({
                 content: '❌ Diese Akte wurde nicht im System gefunden!',
-                ephemeral: true
+                flags: 64
             });
         }
 
@@ -676,7 +697,7 @@ module.exports = {
         await interaction.reply({
             embeds: [confirmEmbed],
             components: [confirmRow],
-            ephemeral: true
+            flags: 64
         });
     },
 
@@ -723,7 +744,7 @@ module.exports = {
         if (!conversionData) {
             return interaction.reply({
                 content: '❌ Fahndungsdaten nicht gefunden! Die Konvertierung ist möglicherweise zu alt.',
-                ephemeral: true
+                flags: 64
             });
         }
 
@@ -787,7 +808,7 @@ module.exports = {
 
         await interaction.reply({
             embeds: [commandEmbed],
-            ephemeral: true
+            flags: 64
         });
 
         global.wantedConversions?.delete(wantedNumber);
@@ -875,7 +896,7 @@ module.exports = {
             if (!session || session.userId !== interaction.user.id) {
                 return await interaction.reply({
                     content: '❌ Session nicht gefunden oder nicht berechtigt!',
-                    ephemeral: true
+                    flags: 64
                 });
             }
 
@@ -886,7 +907,7 @@ module.exports = {
                 if (isNaN(debtAmount) || debtAmount < 0 || debtAmount > 999999999) {
                     return await interaction.reply({
                         content: '❌ Bitte gib eine gültige Zahl zwischen 0 und 999.999.999 ein!',
-                        ephemeral: true
+                        flags: 64
                     });
                 }
 
@@ -898,7 +919,7 @@ module.exports = {
                              `💡 Wird in **${extraHaft} HE** zusätzliche Haft umgewandelt (aufgerundet)\n` +
                              `ℹ️ Die ${debtAmount.toLocaleString()}€ werden NICHT als Geldstrafe hinzugefügt, sondern nur in Hafteinheiten umgerechnet!\n\n` +
                              `🔄 Panel wird aktualisiert...`,
-                    ephemeral: true
+                    flags: 64
                 });
                 
                 setTimeout(async () => {
@@ -947,7 +968,7 @@ module.exports = {
                 if (!interaction.replied) {
                     await interaction.reply({
                         content: '❌ Ein Fehler ist aufgetreten. Bitte versuche es erneut.',
-                        ephemeral: true
+                        flags: 64
                     });
                 }
             } catch (replyError) {

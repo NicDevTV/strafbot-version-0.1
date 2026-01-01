@@ -538,7 +538,7 @@ module.exports = {
     if (!delikt) {
       return await interaction.reply({
         content: '❌ Dieses Delikt wurde nicht im Strafkatalog gefunden!',
-        ephemeral: true
+        flags: 64
       });
     }
 
@@ -547,7 +547,7 @@ module.exports = {
     if (!details) {
       return await interaction.reply({
         content: '❌ Für dieses Delikt sind keine Details verfügbar!',
-        ephemeral: true
+        flags: 64
       });
     }
 
